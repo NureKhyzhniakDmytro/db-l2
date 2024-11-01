@@ -11,3 +11,13 @@ services:
       - ./db/script.sql:/docker-entrypoint-initdb.d/script.sql
     ports:
       - '5432'
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - '8000'
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/northwind
