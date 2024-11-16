@@ -86,3 +86,4 @@ class Employee(EmployeeBase):
     country: str
     notes: str
     reports_to: EmployeeBase
+    total_sales: float

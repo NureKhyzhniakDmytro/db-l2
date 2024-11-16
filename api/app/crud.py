@@ -153,9 +153,18 @@ async def get_employees(db: AsyncSession, limit: int, offset: int) -> Sequence[E
                     e.country,
                     e.notes,
                     e.reports_to,
-                    er.last_name || ' ' || er.first_name AS reports_to_full_name
+                    er.last_name || ' ' || er.first_name AS reports_to_full_name,
+                    COALESCE(s.total_sales, 0.00) AS total_sales
                 FROM employees e
                 LEFT JOIN employees er ON e.reports_to = er.employee_id
+                LEFT JOIN (
+                    SELECT
+                        o.employee_id,
+                        SUM((od.quantity * od.unit_price) * (1 - od.discount))::numeric(10, 2) AS total_sales
+                    FROM orders o
+                    JOIN order_details od ON o.order_id = od.order_id
+                    GROUP BY o.employee_id
+                ) s ON e.employee_id = s.employee_id
                 ORDER BY e.employee_id
                 LIMIT :limit
                 OFFSET :offset

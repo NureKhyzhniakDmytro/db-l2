@@ -34,4 +34,5 @@ def map_employee_to_schema(employee: models.Employee) -> schemas.Employee:
         country=employee.country,
         notes=employee.notes,
         reports_to=schemas.EmployeeBase(id=employee.reports_to, name=employee.reports_to_full_name),
+        total_sales=employee.total_sales
     )

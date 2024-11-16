@@ -68,3 +68,4 @@ class Employee(Base):
     notes = Column(Text)
     reports_to = Column(SmallInteger)
     reports_to_full_name = Column(String(31))
+    total_sales = Column(Float)
