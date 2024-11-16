@@ -9,18 +9,14 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - ./db/script.sql:/docker-entrypoint-initdb.d/script.sql
-    ports:
-      - '5432'
 
   api:
     build:
       context: ./api
-    ports:
-      - '8000'
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/northwind
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/northwind
 
   web:
     build:
