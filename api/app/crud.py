@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text
-from models import Category, ProductCategory, Order, ProductOrder, Employee
+from models import Category, ProductCategory, Order, ProductOrder, Employee, LargestOrder
 from typing import Sequence, Optional
 
 
@@ -172,3 +172,33 @@ async def get_employees(db: AsyncSession, limit: int, offset: int) -> Sequence[E
     stmt = select(Employee).from_statement(query)
     result = await db.execute(stmt)
     return result.scalars().all()
+
+async def get_largest_order(db: AsyncSession, product_name: str) -> Optional[LargestOrder]:
+    query = text("""
+                SELECT 
+                    product_id,
+                    product_name,
+                    order_id,
+                    unit_price,
+                    quantity,
+                    discount,
+                    total_price,
+                    employee_id,
+                    employee_full_name,
+                    order_date,
+                    required_date,
+                    shipped_date,
+                    ship_via,
+                    ship_company_name,
+                    ship_name,
+                    ship_address,
+                    ship_city,
+                    ship_postal_code,
+                    ship_country,
+                    customer_id,
+                    customer_company_name
+                FROM get_largest_order(:product_name)
+                """).bindparams(product_name=product_name)
+    stmt = select(LargestOrder).from_statement(query)
+    result = await db.execute(stmt)
+    return result.scalars().one_or_none()

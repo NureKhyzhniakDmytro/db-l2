@@ -69,3 +69,14 @@ class Employee(Base):
     reports_to = Column(SmallInteger)
     reports_to_full_name = Column(String(31))
     total_sales = Column(Float)
+
+class LargestOrder(Order):
+    __tablename__ = 'order_details'
+    order_id = Column(SmallInteger, ForeignKey('orders.order_id'))
+
+    product_id = Column(SmallInteger, primary_key=True)
+    product_name = Column(String(40))
+    unit_price = Column(Float)
+    quantity = Column(SmallInteger)
+    discount = Column(Float)
+    total_price = Column(Float)

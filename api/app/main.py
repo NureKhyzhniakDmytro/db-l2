@@ -1,4 +1,4 @@
-from conversion import map_order_to_schema, map_employee_to_schema
+from conversion import map_order_to_schema, map_employee_to_schema, map_largest_order_to_schema
 from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db
@@ -80,3 +80,11 @@ async def read_order_products(
 ):
     employees = await crud.get_employees(db, limit, offset)
     return [map_employee_to_schema(employee) for employee in employees]
+
+@app.get("/product/{product_name}/largest", response_model=schemas.LargestOrder)
+async def read_largest_order(
+    product_name: str,
+    db: AsyncSession = Depends(get_db)
+):
+    order = await crud.get_largest_order(db, product_name)
+    return map_largest_order_to_schema(order)

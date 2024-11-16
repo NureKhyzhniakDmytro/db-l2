@@ -87,3 +87,9 @@ class Employee(EmployeeBase):
     notes: str
     reports_to: EmployeeBase
     total_sales: float
+
+class LargestOrder(Order):
+    product: ProductOrder
+
+    class Config:
+        from_attributes = True
