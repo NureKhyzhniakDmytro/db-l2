@@ -46,7 +46,6 @@ class Order(Base):
     ship_name = Column(String(40))
     ship_address = Column(String(60))
     ship_city = Column(String(15))
-    ship_region = Column(String(15))
     ship_postal_code = Column(String(10))
     ship_country = Column(String(15))
     customer_id = Column(String(5))

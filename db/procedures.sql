@@ -56,7 +56,6 @@ AS $$
             o.ship_name,
             o.ship_address,
             o.ship_city,
-            o.ship_region,
             o.ship_postal_code,
             o.ship_country,
             o.customer_id,
