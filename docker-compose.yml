@@ -8,7 +8,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ./db/script.sql:/docker-entrypoint-initdb.d/script.sql
       - ./db/northwind.sql:/docker-entrypoint-initdb.d/northwind.sql
       - ./db/procedures.sql:/docker-entrypoint-initdb.d/procedures.sql
 
