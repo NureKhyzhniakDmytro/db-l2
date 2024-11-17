@@ -72,6 +72,14 @@ async def read_order_products(
     products = await crud.get_order_products(db, order_id, limit, offset)
     return products
 
+@app.get("/orders/{order_id}/price")
+async def read_order_products(
+    order_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await crud.get_order_price(db, order_id)
+    return {"result": result}
+
 @app.get("/employees", response_model=list[schemas.Employee])
 async def read_order_products(
     limit: int = Query(10, ge=1),

@@ -113,3 +113,17 @@ ALTER TABLE orders DROP CONSTRAINT fk_orders_employees;
 ALTER TABLE employee_territories DROP CONSTRAINT fk_employee_territories_territories;
 ALTER TABLE employee_territories DROP CONSTRAINT fk_employee_territories_employees;
 ALTER TABLE employees DROP CONSTRAINT fk_employees_employees;
+
+CREATE OR REPLACE FUNCTION calc_total_price(_order_id int)
+RETURNS numeric(10,2)
+LANGUAGE plpgsql
+AS $$
+    BEGIN
+        RETURN (
+        SELECT
+            SUM(((od.quantity * od.unit_price) * (1 - od.discount)))::numeric(10,2)
+        FROM order_details od
+        WHERE od.order_id = _order_id
+        );
+    END;
+$$;

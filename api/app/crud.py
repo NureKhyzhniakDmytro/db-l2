@@ -212,3 +212,8 @@ async def delete_employee(db: AsyncSession, threshold: float) -> bool:
     except DBAPIError as e:
         print(f'An error occurred: {e}')
         return False
+
+async def get_order_price(db: AsyncSession, order_id: int) -> float:
+    query = text('SELECT calc_total_price(:order_id)').bindparams(order_id=order_id)
+    result = await db.execute(query)
+    return result.scalar()
