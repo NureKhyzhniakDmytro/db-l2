@@ -88,3 +88,11 @@ async def read_largest_order(
 ):
     order = await crud.get_largest_order(db, product_name)
     return map_largest_order_to_schema(order)
+
+@app.delete("/employees")
+async def delete_employee(
+    threshold: float,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await crud.delete_employee(db, threshold)
+    return {'status': result}

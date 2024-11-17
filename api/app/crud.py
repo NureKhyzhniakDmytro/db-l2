@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.future import select
 from sqlalchemy import text
 from models import Category, ProductCategory, Order, ProductOrder, Employee, LargestOrder
@@ -202,3 +203,12 @@ async def get_largest_order(db: AsyncSession, product_name: str) -> Optional[Lar
     stmt = select(LargestOrder).from_statement(query)
     result = await db.execute(stmt)
     return result.scalars().one_or_none()
+
+async def delete_employee(db: AsyncSession, threshold: float) -> bool:
+    query = text('CALL delete_non_manager_employees(:sales_threshold)')
+    try:
+        await db.execute(query, {'sales_threshold': threshold})
+        return True
+    except DBAPIError as e:
+        print(f'An error occurred: {e}')
+        return False

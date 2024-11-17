@@ -77,3 +77,39 @@ AS $$
         RETURN result;
     END;
 $$;
+
+CREATE OR REPLACE PROCEDURE delete_non_manager_employees(sales_threshold numeric)
+LANGUAGE plpgsql
+AS $$
+    DECLARE
+        deleted_count integer;
+    BEGIN
+        DELETE FROM employees e
+        USING (
+            SELECT e.employee_id
+            FROM employees e
+            LEFT JOIN orders o ON e.employee_id = o.employee_id
+            LEFT JOIN order_details od ON o.order_id = od.order_id
+            GROUP BY e.employee_id
+            HAVING SUM(od.quantity * od.unit_price) < sales_threshold
+        ) as low_sales_employees
+        WHERE e.employee_id = low_sales_employees.employee_id
+            AND e.reports_to IS NOT NULL;
+
+        GET DIAGNOSTICS deleted_count = ROW_COUNT;
+
+        RAISE NOTICE 'ROW_COUNT=%', deleted_count;
+
+        IF deleted_count = 0 THEN
+            RAISE EXCEPTION 'Не було видалено жодного некерівного працівника з продажами нижче %', sales_threshold;
+        END IF;
+
+        RAISE NOTICE 'Співробітники з низькими продажами (крімкерівників) видалені';
+    END;
+$$;
+
+-- reset restrictions to demonstrate functionality
+ALTER TABLE orders DROP CONSTRAINT fk_orders_employees;
+ALTER TABLE employee_territories DROP CONSTRAINT fk_employee_territories_territories;
+ALTER TABLE employee_territories DROP CONSTRAINT fk_employee_territories_employees;
+ALTER TABLE employees DROP CONSTRAINT fk_employees_employees;
