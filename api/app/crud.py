@@ -24,6 +24,11 @@ async def get_categories(db: AsyncSession, limit: int, offset: int) -> Sequence[
     result = await db.execute(stmt)
     return result.scalars().all()
 
+async def get_categories_count(db: AsyncSession) -> int:
+    query = text("SELECT COUNT(*) FROM categories")
+    result = await db.execute(query)
+    return result.scalars().one()
+
 async def get_category(db: AsyncSession, category_id: int) -> Optional[Category]:
     query = text("""
                 SELECT
@@ -61,6 +66,11 @@ async def get_category_products(db: AsyncSession, category_id: int, limit: int, 
     result = await db.execute(stmt)
     return result.scalars().all()
 
+async def get_category_products_count(db: AsyncSession, category_id: int) -> int:
+    query = text("SELECT COUNT(*) FROM products WHERE category_id = :category_id").bindparams(category_id=category_id)
+    result = await db.execute(query)
+    return result.scalars().one()
+
 async def get_orders(db: AsyncSession, limit: int, offset: int) -> Sequence[Order]:
     query = text("""
                 SELECT
@@ -90,6 +100,11 @@ async def get_orders(db: AsyncSession, limit: int, offset: int) -> Sequence[Orde
     stmt = select(Order).from_statement(query)
     result = await db.execute(stmt)
     return result.scalars().all()
+
+async def get_orders_count(db: AsyncSession) -> int:
+    query = text("SELECT COUNT(*) FROM orders")
+    result = await db.execute(query)
+    return result.scalars().one()
 
 async def get_order(db: AsyncSession, order_id: int) -> Optional[Order]:
     query = text("""
@@ -140,6 +155,11 @@ async def get_order_products(db: AsyncSession, order_id: int, limit: int, offset
     result = await db.execute(stmt)
     return result.scalars().all()
 
+async def get_orders_products_count(db: AsyncSession, order_id: int) -> int:
+    query = text("SELECT COUNT(*) FROM order_details WHERE order_id = :order_id").bindparams(order_id=order_id)
+    result = await db.execute(query)
+    return result.scalars().one()
+
 async def get_employees(db: AsyncSession, limit: int, offset: int) -> Sequence[Employee]:
     query = text("""
                 SELECT
@@ -173,6 +193,11 @@ async def get_employees(db: AsyncSession, limit: int, offset: int) -> Sequence[E
     stmt = select(Employee).from_statement(query)
     result = await db.execute(stmt)
     return result.scalars().all()
+
+async def get_employees_count(db: AsyncSession) -> int:
+    query = text("SELECT COUNT(*) FROM employees")
+    result = await db.execute(query)
+    return result.scalars().one()
 
 async def get_largest_order(db: AsyncSession, product_name: str) -> Optional[LargestOrder]:
     query = text("""

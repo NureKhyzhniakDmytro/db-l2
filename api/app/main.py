@@ -8,14 +8,23 @@ import crud
 app = FastAPI()
 
 
-@app.get("/categories", response_model=list[schemas.Category])
+@app.get("/categories", response_model=schemas.PaginatedCategories)
 async def read_categories(
     limit: int = Query(10, ge=1),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db)
 ):
     categories = await crud.get_categories(db, limit, offset)
-    return categories
+    total_items = await crud.get_categories_count(db)
+    response = schemas.PaginatedCategories(
+        data=categories,
+        metadata=schemas.PaginationMetadata(
+            total_items=total_items,
+            limit=limit,
+            offset=offset
+        )
+    )
+    return response
 
 @app.get("/categories/{category_id}", response_model=schemas.Category)
 async def read_category(
@@ -27,7 +36,7 @@ async def read_category(
         raise HTTPException(status_code=404, detail="Category not found")
     return category
 
-@app.get("/categories/{category_id}/products", response_model=list[schemas.ProductCategory])
+@app.get("/categories/{category_id}/products", response_model=schemas.PaginatedCategoryProducts)
 async def read_category_products(
     category_id: int,
     limit: int = Query(10, ge=1),
@@ -38,16 +47,34 @@ async def read_category_products(
     if category is None:
         raise HTTPException(status_code=404, detail="Category not found")
     products = await crud.get_category_products(db, category_id, limit, offset)
-    return products
+    total_items = await crud.get_category_products_count(db, category_id)
+    response = schemas.PaginatedCategoryProducts(
+        data=products,
+        metadata=schemas.PaginationMetadata(
+            total_items=total_items,
+            limit=limit,
+            offset=offset
+        )
+    )
+    return response
 
-@app.get("/orders", response_model=list[schemas.Order])
+@app.get("/orders", response_model=schemas.PaginatedOrders)
 async def read_orders(
     limit: int = Query(10, ge=1),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db)
 ):
     orders = await crud.get_orders(db, limit, offset)
-    return [map_order_to_schema(order) for order in orders]
+    total_items = await crud.get_orders_count(db)
+    response = schemas.PaginatedOrders(
+        data=[map_order_to_schema(order) for order in orders],
+        metadata=schemas.PaginationMetadata(
+            total_items=total_items,
+            limit=limit,
+            offset=offset
+        )
+    )
+    return response
 
 @app.get("/orders/{order_id}", response_model=schemas.Order)
 async def read_order(
@@ -59,7 +86,7 @@ async def read_order(
         raise HTTPException(status_code=404, detail="Order not found")
     return map_order_to_schema(order)
 
-@app.get("/orders/{order_id}/products", response_model=list[schemas.ProductOrder])
+@app.get("/orders/{order_id}/products", response_model=schemas.PaginatedOrderProducts)
 async def read_order_products(
     order_id: int,
     limit: int = Query(10, ge=1),
@@ -70,7 +97,16 @@ async def read_order_products(
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     products = await crud.get_order_products(db, order_id, limit, offset)
-    return products
+    total_items = await crud.get_orders_count(db)
+    response = schemas.PaginatedOrderProducts(
+        data=products,
+        metadata=schemas.PaginationMetadata(
+            total_items=total_items,
+            limit=limit,
+            offset=offset
+        )
+    )
+    return response
 
 @app.get("/orders/{order_id}/price")
 async def read_order_products(
@@ -80,14 +116,23 @@ async def read_order_products(
     result = await crud.get_order_price(db, order_id)
     return {"result": result}
 
-@app.get("/employees", response_model=list[schemas.Employee])
+@app.get("/employees", response_model=schemas.PaginatedEmployees)
 async def read_order_products(
     limit: int = Query(10, ge=1),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db)
 ):
     employees = await crud.get_employees(db, limit, offset)
-    return [map_employee_to_schema(employee) for employee in employees]
+    total_items = await crud.get_orders_count(db)
+    response = schemas.PaginatedEmployees(
+        data=[map_employee_to_schema(employee) for employee in employees],
+        metadata=schemas.PaginationMetadata(
+            total_items=total_items,
+            limit=limit,
+            offset=offset
+        )
+    )
+    return response
 
 @app.get("/product/{product_name}/largest", response_model=schemas.LargestOrder)
 async def read_largest_order(

@@ -1,6 +1,11 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+
+class PaginationMetadata(BaseModel):
+    total_items: int
+    limit: int
+    offset: int
 
 class Category(BaseModel):
     id: int = Field(..., validation_alias='category_id')
@@ -10,6 +15,10 @@ class Category(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PaginatedCategories(BaseModel):
+    data: List[Category]
+    metadata: PaginationMetadata
 
 class ProductBase(BaseModel):
     id: int = Field(..., validation_alias='product_id')
@@ -24,6 +33,10 @@ class ProductCategory(ProductBase):
     class Config:
         from_attributes = True
 
+class PaginatedCategoryProducts(BaseModel):
+    data: List[ProductCategory]
+    metadata: PaginationMetadata
+
 class ProductOrder(ProductBase):
     quantity: int
     discount: float
@@ -31,6 +44,10 @@ class ProductOrder(ProductBase):
 
     class Config:
         from_attributes = True
+
+class PaginatedOrderProducts(BaseModel):
+    data: List[ProductOrder]
+    metadata: PaginationMetadata
 
 class EmployeeBase(BaseModel):
     id: Optional[int]
@@ -76,6 +93,10 @@ class Order(BaseModel):
     class Config:
         from_attributes = True
 
+class PaginatedOrders(BaseModel):
+    data: List[Order]
+    metadata: PaginationMetadata
+
 class Employee(EmployeeBase):
     title: str
     birth_date: datetime
@@ -87,6 +108,10 @@ class Employee(EmployeeBase):
     notes: str
     reports_to: EmployeeBase
     total_sales: float
+
+class PaginatedEmployees(BaseModel):
+    data: List[Employee]
+    metadata: PaginationMetadata
 
 class LargestOrder(Order):
     product: ProductOrder
