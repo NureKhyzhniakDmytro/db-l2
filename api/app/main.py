@@ -97,7 +97,7 @@ async def read_order_products(
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     products = await crud.get_order_products(db, order_id, limit, offset)
-    total_items = await crud.get_orders_count(db)
+    total_items = await crud.get_orders_products_count(db)
     response = schemas.PaginatedOrderProducts(
         data=products,
         metadata=schemas.PaginationMetadata(
@@ -123,7 +123,7 @@ async def read_order_products(
     db: AsyncSession = Depends(get_db)
 ):
     employees = await crud.get_employees(db, limit, offset)
-    total_items = await crud.get_orders_count(db)
+    total_items = await crud.get_employees_count(db)
     response = schemas.PaginatedEmployees(
         data=[map_employee_to_schema(employee) for employee in employees],
         metadata=schemas.PaginationMetadata(

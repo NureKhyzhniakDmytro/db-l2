@@ -75,7 +75,7 @@ class Shipment(BaseModel):
     name: str
     address: str
     city: str
-    postal_code: str
+    postal_code: Optional[str]
     country: str
     required_date: datetime
     shipped_date: datetime
