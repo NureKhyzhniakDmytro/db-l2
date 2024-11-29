@@ -140,6 +140,8 @@ async def read_largest_order(
     db: AsyncSession = Depends(get_db)
 ):
     order = await crud.get_largest_order(db, product_name)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Product not found")
     return map_largest_order_to_schema(order)
 
 @app.delete("/employees")
