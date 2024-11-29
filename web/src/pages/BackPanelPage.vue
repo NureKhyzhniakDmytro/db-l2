@@ -15,12 +15,7 @@
               :class="selectedTable === index ? 'bg-blue-500 shadow-lg' : 'hover:bg-blue-700'"
               @click="selectTable(index)"
           >
-            <img
-                :src="icons[index]"
-                alt="icon"
-                class="w-6 h-6 mr-3"
-                loading="lazy"
-            />
+            <span v-html="icons[index]" class="w-6 h-6 mr-3"></span>
             <span class="text-sm font-medium">{{ table }}</span>
           </li>
         </ul>
@@ -90,9 +85,9 @@ export default defineComponent({
     const isPanelOpen = ref(true);
     const tables = ref(["Categories", "Orders", "Employees"]);
     const icons = ref([
-      "https://www.svgrepo.com/show/496936/category.svg", // Categories icon
-      "https://www.svgrepo.com/show/458826/order.svg",    // Orders icon
-      "https://www.svgrepo.com/show/447734/person-male.svg", // Employees icon
+      `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 10H7C9 10 10 9 10 7V5C10 3 9 2 7 2H5C3 2 2 3 2 5V7C2 9 3 10 5 10Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M17 10H19C21 10 22 9 22 7V5C22 3 21 2 19 2H17C15 2 14 3 14 5V7C14 9 15 10 17 10Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M17 22H19C21 22 22 21 22 19V17C22 15 21 14 19 14H17C15 14 14 15 14 17V19C14 21 15 22 17 22Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M5 22H7C9 22 10 21 10 19V17C10 15 9 14 7 14H5C3 14 2 15 2 17V19C2 21 3 22 5 22Z" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`,
+      `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <rect x="5" y="4" width="14" height="17" rx="2" stroke="#ffffff" stroke-width="2"></rect> <path d="M9 9H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></path> <path d="M9 13H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></path> <path d="M9 17H13" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></path> </g></svg>`,
+      `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="5.12" stroke="#ffffff" fill="none"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><circle cx="32" cy="18.14" r="11.14"></circle><path d="M54.55,56.85A22.55,22.55,0,0,0,32,34.3h0A22.55,22.55,0,0,0,9.45,56.85Z"></path></g></svg>`,
     ]);
     const selectedTable = ref<number | null>(null);
     const currentComponent = ref<string>("");
