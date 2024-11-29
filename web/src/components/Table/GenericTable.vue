@@ -1,10 +1,21 @@
 <template>
   <div class="w-full p-4">
-    <div class="overflow-x-auto">
-      <table class="table-auto w-full border-collapse border border-gray-200">
-        <thead>
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold text-gray-800">{{ title }}</h1>
+      <!-- Slot for custom buttons -->
+      <div>
+        <slot name="actions"></slot>
+      </div>
+    </div>
+    <div class="overflow-x-auto shadow border border-gray-200 rounded-lg">
+      <table class="table-auto w-full border-collapse">
+        <thead class="bg-gray-100 text-gray-600 uppercase text-sm">
         <tr>
-          <th v-for="(header, index) in headers" :key="index" class="border border-gray-300 p-2">
+          <th
+              v-for="(header, index) in headers"
+              :key="index"
+              class="p-4 text-left border-b border-gray-300"
+          >
             {{ header }}
           </th>
         </tr>
@@ -14,10 +25,7 @@
         </tbody>
       </table>
     </div>
-    <Pagination
-        :metadata="metadata"
-        @page-change="$emit('page-change', $event)"
-    />
+    <Pagination :metadata="metadata" @page-change="$emit('page-change', $event)" />
   </div>
 </template>
 
@@ -28,6 +36,7 @@ import Pagination from './Pagination.vue';
 export default defineComponent({
   components: { Pagination },
   props: {
+    title: String,
     headers: Array as () => string[],
     data: Array as () => any[],
     metadata: Object as () => {

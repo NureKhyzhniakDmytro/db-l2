@@ -2,23 +2,45 @@
   <div class="flex h-screen">
     <!-- Sidebar -->
     <transition name="slide">
-      <div v-if="isPanelOpen" class="w-64 relative h-full bg-white shadow-md p-4">
-        <h2 class="text-lg font-semibold mb-4">NORTHWIND</h2>
-        <ul class="space-y-2">
+      <div
+          v-if="isPanelOpen"
+          class="w-64 h-full bg-gradient-to-b from-blue-800 via-blue-700 to-blue-600 text-white shadow-lg p-6 relative"
+      >
+        <h2 class="text-2xl font-bold mb-6 tracking-wide">NORTHWIND</h2>
+        <ul class="space-y-4">
           <li
               v-for="(table, index) in tables"
               :key="index"
-              class="p-2 border rounded hover:bg-gray-100 cursor-pointer"
-              @click="selectTable(index)">
-            {{ table }}
+              class="flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200"
+              :class="selectedTable === index ? 'bg-blue-500 shadow-lg' : 'hover:bg-blue-700'"
+              @click="selectTable(index)"
+          >
+            <img
+                :src="icons[index]"
+                alt="icon"
+                class="w-6 h-6 mr-3"
+                loading="lazy"
+            />
+            <span class="text-sm font-medium">{{ table }}</span>
           </li>
         </ul>
         <button
             @click="togglePanel"
-            class="absolute top-4 right-4 bg-transparent text-gray-500 hover:text-gray-700">
-          <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-            <path d="m4.177 7.823 2.396-2.396A.25.25 0 0 1 7 5.604v4.792a.25.25 0 0 1-.427.177L4.177 8.177a.25.25 0 0 1 0-.354Z"/>
-            <path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25H9.5v-13Zm12.5 13a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25H11v13Z"/>
+            class="absolute top-4 right-4 text-blue-200 hover:text-white focus:outline-none"
+        >
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+          >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
@@ -26,10 +48,24 @@
 
     <!-- Main content -->
     <div class="flex-1 bg-gray-50 p-6 overflow-y-auto">
-      <button @click="togglePanel" v-if="!isPanelOpen" class="fixed top-4 left-4 bg-transparent text-gray-500 hover:text-gray-700">
-        <svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-          <path d="M6.823 7.823a.25.25 0 0 1 0 .354l-2.396 2.396A.25.25 0 0 1 4 10.396V5.604a.25.25 0 0 1 .427-.177Z"/>
-          <path d="M1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25V1.75C0 .784.784 0 1.75 0ZM1.5 1.75v12.5c0 .138.112.25.25.25H9.5v-13H1.75a.25.25 0 0 0-.25.25ZM11 14.5h3.25a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25H11Z"/>
+      <button
+          v-if="!isPanelOpen"
+          @click="togglePanel"
+          class="fixed top-4 left-4 text-gray-400 hover:text-blue-700 focus:outline-none"
+      >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+          <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12h18M3 6h18M3 18h18"
+          />
         </svg>
       </button>
       <component :is="currentComponent" v-if="selectedTable !== null" />
@@ -38,23 +74,28 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import { defineComponent, onMounted, ref } from "vue";
 import CategoriesPage from "./CategoriesPage.vue";
 import OrdersPage from "./OrdersPage.vue";
 import EmployeesPage from "./EmployeesPage.vue";
 
 export default defineComponent({
-  name: 'BackPanelPage',
+  name: "BackPanelPage",
   components: {
     CategoriesPage,
     OrdersPage,
-    EmployeesPage
+    EmployeesPage,
   },
   setup() {
     const isPanelOpen = ref(true);
-    const tables = ref(['Categories', 'Orders', 'Employees']);
+    const tables = ref(["Categories", "Orders", "Employees"]);
+    const icons = ref([
+      "https://www.svgrepo.com/show/496936/category.svg", // Categories icon
+      "https://www.svgrepo.com/show/458826/order.svg",    // Orders icon
+      "https://www.svgrepo.com/show/447734/person-male.svg", // Employees icon
+    ]);
     const selectedTable = ref<number | null>(null);
-    const currentComponent = ref<string>('');
+    const currentComponent = ref<string>("");
 
     const togglePanel = () => {
       isPanelOpen.value = !isPanelOpen.value;
@@ -64,16 +105,16 @@ export default defineComponent({
       selectedTable.value = index;
       switch (index) {
         case 0:
-          currentComponent.value = 'CategoriesPage';
+          currentComponent.value = "CategoriesPage";
           break;
         case 1:
-          currentComponent.value = 'OrdersPage';
+          currentComponent.value = "OrdersPage";
           break;
         case 2:
-          currentComponent.value = 'EmployeesPage';
+          currentComponent.value = "EmployeesPage";
           break;
         default:
-          currentComponent.value = '';
+          currentComponent.value = "";
       }
     };
 
@@ -84,6 +125,7 @@ export default defineComponent({
     return {
       isPanelOpen,
       tables,
+      icons,
       selectedTable,
       currentComponent,
       togglePanel,
@@ -94,7 +136,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: transform 0.3s ease;
 }
 .slide-enter-from {
