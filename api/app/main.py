@@ -97,7 +97,7 @@ async def read_order_products(
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     products = await crud.get_order_products(db, order_id, limit, offset)
-    total_items = await crud.get_orders_products_count(db)
+    total_items = await crud.get_orders_products_count(db, order_id)
     response = schemas.PaginatedOrderProducts(
         data=products,
         metadata=schemas.PaginationMetadata(
@@ -109,7 +109,7 @@ async def read_order_products(
     return response
 
 @app.get("/orders/{order_id}/price")
-async def read_order_products(
+async def read_order_price(
     order_id: int,
     db: AsyncSession = Depends(get_db)
 ):
@@ -117,7 +117,7 @@ async def read_order_products(
     return {"result": result}
 
 @app.get("/employees", response_model=schemas.PaginatedEmployees)
-async def read_order_products(
+async def read_employees(
     limit: int = Query(10, ge=1),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db)

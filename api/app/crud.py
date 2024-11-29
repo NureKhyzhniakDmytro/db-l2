@@ -91,7 +91,7 @@ async def get_orders(db: AsyncSession, limit: int, offset: int) -> Sequence[Orde
                     o.customer_id,
                     c.company_name AS customer_company_name
                 FROM orders o
-                JOIN employees e ON o.employee_id = e.employee_id
+                LEFT JOIN employees e ON o.employee_id = e.employee_id
                 JOIN shippers s ON o.ship_via = s.shipper_id
                 JOIN customers c ON o.customer_id = c.customer_id
                 LIMIT :limit
@@ -126,7 +126,7 @@ async def get_order(db: AsyncSession, order_id: int) -> Optional[Order]:
                     o.customer_id,
                     c.company_name AS customer_company_name
                 FROM orders o
-                JOIN employees e ON o.employee_id = e.employee_id
+                LEFT JOIN employees e ON o.employee_id = e.employee_id
                 JOIN shippers s ON o.ship_via = s.shipper_id
                 JOIN customers c ON o.customer_id = c.customer_id
                 WHERE o.order_id = :order_id
@@ -232,7 +232,8 @@ async def get_largest_order(db: AsyncSession, product_name: str) -> Optional[Lar
 async def delete_employee(db: AsyncSession, threshold: float) -> bool:
     query = text('CALL delete_non_manager_employees(:sales_threshold)')
     try:
-        await db.execute(query, {'sales_threshold': threshold})
+        await db.execute(query, {'sales_threshold': float(threshold)})
+        await db.commit()
         return True
     except DBAPIError as e:
         print(f'An error occurred: {e}')

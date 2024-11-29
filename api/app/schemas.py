@@ -78,7 +78,7 @@ class Shipment(BaseModel):
     postal_code: Optional[str]
     country: str
     required_date: datetime
-    shipped_date: datetime
+    shipped_date: Optional[datetime]
 
     class Config:
         from_attributes = True
