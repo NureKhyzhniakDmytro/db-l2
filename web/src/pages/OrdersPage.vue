@@ -139,6 +139,17 @@
       </div>
     </div>
   </div>
+
+  <!-- Notification -->
+  <transition name="fade">
+    <div
+        v-if="notification.visible"
+        class="fixed top-4 right-4 bg-green-600 text-white p-4 rounded-md shadow-lg"
+        :class="notification.type === 'error' ? 'bg-red-600' : 'bg-green-600'"
+    >
+      <span>{{ notification.message }}</span>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -159,6 +170,12 @@ export default defineComponent({
     const orderProducts = ref<any[]>([]);
     const productName = ref('');
     const showGetLargestPopup = ref(false);
+
+    const notification = ref({
+      visible: false,
+      message: '',
+      type: 'success' as 'success' | 'error',
+    });
 
     const formatEmployee = (employee: any) => {
       if (!employee || !employee.name) return 'N/A';
@@ -191,23 +208,31 @@ export default defineComponent({
     };
 
     // Fetch largest order
-// Fetch largest order
     const fetchLargestOrder = async () => {
       try {
-        // Fetch the largest order
         const response = await fetch(
             `https://northwind.yooud.org/api/product/${encodeURIComponent(productName.value)}/largest`
         );
+
+        if (response.status === 404) {
+          notification.value = {
+            visible: true,
+            message: 'No product found',
+            type: 'error',
+          };
+          // Hide notification after 3 seconds
+          setTimeout(() => {
+            notification.value.visible = false;
+          }, 3000);
+          return;
+        }
+
         const data = await response.json();
         selectedOrder.value = data;
 
-        // Fetch the total price for the largest order
         await fetchOrderTotalPrice(data.id);
-
-        // Fetch the products for the largest order
         await fetchOrderProducts(data.id);
 
-        // Show the popup
         showPopup.value = true;
         showGetLargestPopup.value = false;
       } catch (error) {
@@ -254,6 +279,7 @@ export default defineComponent({
     return {
       tableData,
       pagination,
+      notification,
       fetchData,
       showPopup,
       showGetLargestPopup,
