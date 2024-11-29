@@ -22,7 +22,7 @@
             @click="openOrderPopup(item)"
         >
           <td class="p-4 text-sm font-medium text-gray-900">{{ item.id }}</td>
-          <td class="p-4 text-sm text-gray-700">{{ item.employee.name }}</td>
+          <td class="p-4 text-sm text-gray-700">{{ item.employee.name ? item.employee.name : 'N/A' }}</td>
           <td class="p-4 text-sm text-gray-700">{{ item.customer.name }} ({{ item.customer.id }})</td>
           <td class="p-4 text-sm text-gray-700">{{ formatDate(item.order_date) }}</td>
         </tr>
@@ -72,7 +72,7 @@
         <!-- Employee Details -->
         <div>
           <span class="font-medium">Employee: </span>
-          <span>{{ selectedOrder?.employee.name }} (ID: {{ selectedOrder?.employee.id }})</span>
+          <span>{{ formatEmployee(selectedOrder?.employee) }}</span>
         </div>
 
         <!-- Customer Details -->
@@ -147,7 +147,7 @@ import GenericTable from '../components/Table/GenericTable.vue';
 
 export default defineComponent({
   components: { GenericTable },
-  setup() {
+  setup: function () {
     const tableData = ref<any[]>([]);
     const pagination = ref({
       total_items: 0,
@@ -159,6 +159,11 @@ export default defineComponent({
     const orderProducts = ref<any[]>([]);
     const productName = ref('');
     const showGetLargestPopup = ref(false);
+
+    const formatEmployee = (employee: any) => {
+      if (!employee || !employee.name) return 'N/A';
+      return `${employee.name} (ID: ${employee.id})`;
+    };
 
     // Helper function for formatting dates
     const formatDate = (dateStr: string | null) => {
@@ -177,7 +182,7 @@ export default defineComponent({
         const response = await fetch(
             `https://northwind.yooud.org/api/orders?limit=${pagination.value.limit}&offset=${offset}`
         );
-        const { data, metadata } = await response.json();
+        const {data, metadata} = await response.json();
         tableData.value = data;
         pagination.value = metadata;
       } catch (error) {
@@ -216,7 +221,7 @@ export default defineComponent({
         const response = await fetch(
             `https://northwind.yooud.org/api/orders/${orderId}/products`
         );
-        const { data } = await response.json();
+        const {data} = await response.json();
         orderProducts.value = data;
       } catch (error) {
         console.error('Failed to fetch products:', error);
@@ -229,7 +234,7 @@ export default defineComponent({
         const response = await fetch(
             `https://northwind.yooud.org/api/orders/${orderId}/price`
         );
-        const { result } = await response.json();
+        const {result} = await response.json();
         selectedOrder.value.total_price = result;
       } catch (error) {
         console.error('Failed to fetch total price:', error);
@@ -246,7 +251,20 @@ export default defineComponent({
 
     fetchData(); // Initial fetch
 
-    return { tableData, pagination, fetchData, showPopup, showGetLargestPopup, productName, selectedOrder, orderProducts, formatDate, openOrderPopup, fetchLargestOrder};
+    return {
+      tableData,
+      pagination,
+      fetchData,
+      showPopup,
+      showGetLargestPopup,
+      productName,
+      selectedOrder,
+      orderProducts,
+      formatEmployee,
+      formatDate,
+      openOrderPopup,
+      fetchLargestOrder
+    };
   },
 });
 </script>
